@@ -1,8 +1,17 @@
 # diffbench
 
+![diffbench Falsifiable Optimization Gate](./docs/images/hero-banner.jpg)
+
 **Falsifiable optimization gate for developers and coding agents:** hotspot discovery (`V8 Inspector` & `cProfile`), differential equivalence fuzzing with delta-debugging counterexample shrinking, and statistically rigorous A/B benchmarking (`Welch's t-test`, `Mann-Whitney U`, and bootstrap confidence intervals).
 
 Zero runtime dependencies. 100% local. No API keys required.
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![Node.js >= 20](https://img.shields.io/badge/node-%3E%3D20-339933.svg)](https://nodejs.org/)
+[![Agent Skills Standard](https://img.shields.io/badge/Agent_Skills-SKILL.md-black.svg)](./SKILL.md)
+[![Zero Runtime Deps](https://img.shields.io/badge/runtime_deps-0-34d399.svg)](./docs/architecture.md)
+
+---
 
 ## Why diffbench?
 
@@ -15,6 +24,10 @@ When you or a coding agent optimizes a hot function or ports a slow loop to anot
 - **Profile first:** locate the slow 5% using Node's built-in V8 CPU profiler or Python's `cProfile`.
 - **Fuzz & shrink:** test adversarial edge cases plus seeded property-based inputs, automatically shrinking any failing input down to a minimal counterexample.
 - **Prove speedup statistically:** interleave randomized `A/B` batches with auto-calibrated batching and gate on minimum median speedup, `Welch's t-test`, `Mann-Whitney U`, and the lower bound of a seeded bootstrap confidence interval.
+
+![diffbench Falsifiable Optimization Pipeline](./docs/images/pipeline-architecture.svg)
+
+---
 
 ## Quick Start
 
@@ -30,6 +43,8 @@ Scaffold a runnable experiment (`baseline.mjs`, `candidate.mjs`, and `hypothesis
 diffbench init --dir ./demo
 diffbench gate ./demo/hypothesis.json
 ```
+
+![diffbench Gate Verified Output & Bootstrap CI](./docs/images/gate-terminal-report.svg)
 
 Verified output from running `diffbench gate ./demo/hypothesis.json --no-color`:
 
@@ -58,9 +73,13 @@ diffbench bench  (30 interleaved rounds, batch=16, warmup=5)
   Mann-Whit : z=6.653, p=1.443e-11, cliff=1.000
 ```
 
+---
+
 ## Catching & Shrinking Behavioral Bugs
 
 When a candidate diverges on a random array, delta debugging reduces the input to a minimal counterexample:
+
+![Delta-Debugging Counterexample Shrinking Flow](./docs/images/shrinking-flow.svg)
 
 ```bash
 diffbench equiv \
@@ -86,6 +105,8 @@ diffbench equiv  [FAIL]
     CandidateOut: {"ok":true,"value":0}
 ```
 
+---
+
 ## Profiling Hotspots
 
 Profile a JS/ESM function via V8 Inspector (`node:inspector/promises`) or a Python script via `cProfile`:
@@ -98,12 +119,18 @@ diffbench profile ./demo/baseline.mjs#uniqueIntersection \
 diffbench profile ./work.py --top 3
 ```
 
+---
+
 ## Cross-Language Targets (`cmd:` and `jsonl:`)
 
 Verify ports between Node, Python, Rust, Go, or C binaries using either:
 - **ESM/JS export:** `./path/file.mjs#exportName`
 - **One-shot stdin/stdout executable:** `"cmd:python worker.py"` (receives JSON argument array on `stdin`, emits `{"ok": true, "value": ...}` on `stdout`)
 - **Persistent NDJSON worker:** `"jsonl:./target/release/fast_worker"` (reads one JSON argument array per line on `stdin`, writes one JSON result line on `stdout`)
+
+See [Cross-Language Workers](./docs/cross-language-workers.md) for Python and worker protocol templates.
+
+---
 
 ## Schema DSL Reference
 
@@ -112,10 +139,23 @@ Pass positional argument schemas as comma-separated expressions via `--schema`:
 - Combinators: `enum<a,b,c>`, `nullable<T>`, `array<T>(minLen,maxLen)`, `tuple<T1,T2>`, `record<k1:T1,k2:T2>`, `map<T>(minKeys,maxKeys)`
 - Or supply `--cases cases.json` with a static corpus array (`[[arg1, arg2], ...]` or `{"cases": [...]}`).
 
-## Output Formats & Agent Skill
+Full syntax and edge-case rules are documented in [Schema DSL & Edge-Case Generation](./docs/schema-dsl.md).
 
-All commands support `--json`, `--markdown` (ready for GitHub Actions job summaries or PR comments), and `--no-color`.
-Coding agents (Antigravity, Claude Code, Codex, Cursor) can load [`SKILL.md`](./SKILL.md) directly to enforce the falsifiable optimization loop.
+---
+
+## Documentation
+
+| Guide | Topic |
+| --- | --- |
+| [Docs Hub](./docs/README.md) | Documentation index & overview |
+| [Architecture](./docs/architecture.md) | Internal pipeline, runner adapters, and execution flow |
+| [CLI Reference](./docs/cli-reference.md) | Subcommands, flags, exit codes, and `hypothesis.json` spec |
+| [Schema DSL](./docs/schema-dsl.md) | Input generators, adversarial edge cases, and shrinking |
+| [Statistical Methodology](./docs/statistical-methodology.md) | Auto-calibration, Welch's t-test, Mann-Whitney U, and bootstrap CIs |
+| [Cross-Language Workers](./docs/cross-language-workers.md) | `cmd:` & `jsonl:` protocols for Python, Rust, Go, and C |
+| [CI & Coding Agents](./docs/ci-and-agents.md) | GitHub Actions summaries and [`SKILL.md`](./SKILL.md) workflows |
+
+---
 
 ## Architecture
 
