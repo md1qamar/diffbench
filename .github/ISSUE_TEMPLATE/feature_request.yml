@@ -1,0 +1,19 @@
+name: Feature Request
+description: Propose a new statistical test, profiler adapter, or schema type
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What capability would you like to add to diffbench?
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: How does this improve falsifiable optimization or differential testing?
+    validations:
+      required: true

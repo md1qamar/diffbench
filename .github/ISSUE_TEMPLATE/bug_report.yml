@@ -1,0 +1,26 @@
+name: Bug Report
+description: Report a bug in diffbench
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the command, hypothesis/schema, and unexpected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Minimal command or `hypothesis.json` to reproduce.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "Node.js 22.x / Windows / Linux"
+    validations:
+      required: true
